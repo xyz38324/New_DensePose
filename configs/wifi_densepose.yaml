@@ -20,7 +20,7 @@ SOLVER:
 
 MODEL:
   WEIGHTS: "https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_101_FPN_s1x_legacy/164832182/model_final_10af0e.pkl" 
-   #"/home/visier/new_densepose/weights/R_101_FPN_legacy.pkl"
+ 
 LOSS:
   box:
   
