@@ -1,0 +1,27 @@
+_BASE_: "densepose_rcnn_R_101_FPN_s1x_legacy.yaml"
+images_dir:
+  Name: "/home/visier/mm_fi/MMFi_dataset/all_images"
+
+MODEL_NAME: 
+  Name: "WiFi_DensePose"
+
+Teacher_Model:
+  NAME: "MyGeneralizedRCNN"
+
+MTN:
+  NAME: "ModalityTranslationNetwork"
+
+SOLVER:
+  IMS_PER_BATCH: 4
+  BASE_LR: 0.01
+  STEPS: (60000, 80000)
+  MAX_ITER: 90000
+  WARMUP_FACTOR: 0.1
+
+MODEL:
+  WEIGHTS: "/home/visier/new_densepose/weights/R_101_FPN_legacy.pkl"
+LOSS:
+  box:
+  
+  tr:
+  dp:
