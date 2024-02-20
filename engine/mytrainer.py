@@ -87,7 +87,7 @@ class CustomTrainer(SimpleTrainer):
             self.optimizer.zero_grad()
 
         results=self.teacher_model(data)
-        loss_dict = self.model(data)
+        loss_dict = self.model(data,results)
         
       
         
