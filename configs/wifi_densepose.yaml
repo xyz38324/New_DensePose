@@ -12,7 +12,7 @@ MTN:
   NAME: "ModalityTranslationNetwork"
 
 SOLVER:
-  IMS_PER_BATCH: 4
+  IMS_PER_BATCH: 2
   BASE_LR: 0.01
   STEPS: (60000, 80000)
   MAX_ITER: 90000
@@ -20,9 +20,8 @@ SOLVER:
 
 MODEL:
   WEIGHTS: "https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_101_FPN_s1x_legacy/164832182/model_final_10af0e.pkl" 
- 
-LOSS:
-  box:
-  
-  tr:
-  dp:
+loss:
+  densepose: 0.6
+  cls: 1.2
+  box: 1.0
+  transfer: 1

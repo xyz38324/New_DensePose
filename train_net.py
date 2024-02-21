@@ -29,12 +29,6 @@ def setup(args):
 def main(args):
     cfg = setup(args)
     PathManager.set_strict_kwargs_checking(False)
-    # teacher_model = MyTrainer.build_teachermodel(cfg)
-    # teacher_model.eval()
-    # checkpointer = DetectionCheckpointer(teacher_model)
-    # checkpointer.load(cfg.MODEL.WEIGHTS)   
-    
-
     trainer = MyTrainer(cfg)
     trainer.resume_or_load(resume=args.resume)
     trainer.train()

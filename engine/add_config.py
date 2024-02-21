@@ -11,14 +11,18 @@ def add_custom_config(cfg: CN):
     _C.Teacher_Model=CN()
     _C.Teacher_Model.NAME=""
 
+    _C.MODEL.Student=CN()
+    _C.MODEL.Student.ROI_HEADS = "Student_ROIHead"
+
     _C.MTN=CN()
     _C.MTN.NAME=""
 
-    _C.LOSS=CN()
-    _C.LOSS.box=1.0
-    _C.LOSS.dp=0.6
-    _C.LOSS.tr=0.00001
-    _C.LOSS.cls = 1.2
+    _C.loss=CN()
+    _C.loss.densepose=None
+    _C.loss.cls = None
+    _C.loss.box=None
+    _C.loss.transfer=None
+
 
 
  

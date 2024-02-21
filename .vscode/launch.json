@@ -12,7 +12,7 @@
                 // "SOLVER.BASE_LR", "0.0025"
             ],
             "console": "integratedTerminal",
-            "justMyCode": true,
+            // "justMyCode": true,
             "pythonPath":"/home/visier/miniconda3/envs/seemoo/bin/python"
         }
     ]
