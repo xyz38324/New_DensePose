@@ -30,7 +30,6 @@ def main(args):
     cfg = setup(args)
     PathManager.set_strict_kwargs_checking(False)
     trainer = MyTrainer(cfg)
-    trainer.resume_or_load(resume=args.resume)
     trainer.train()
 
 if __name__ == "__main__":

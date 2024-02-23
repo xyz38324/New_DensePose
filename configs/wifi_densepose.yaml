@@ -25,3 +25,10 @@ loss:
   cls: 1.2
   box: 1.0
   transfer: 1
+
+Student: 
+  Resume: 'output/checkpoint_0000005.pth'
+  save_interval: 5
+INPUT:
+  MIN_SIZE_TEST: 480
+  MAX_SIZE_TEST: 640

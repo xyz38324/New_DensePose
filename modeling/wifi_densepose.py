@@ -86,7 +86,7 @@ class WiFi_DensePose(nn.Module):
             output_list.append(current_tensor.squeeze(0))
 
         mtn_image = self.preprocess_mtn(output_list)
-
+        mtn_image.tensor = self.normalize(mtn_image.tensor)
         features = self.backbone(mtn_image.tensor)
         proposals, proposal_losses = self.proposal_generator(mtn_image, features, new_instances_list)
         _, detector_losses = self.roi_heads(mtn_image, features, proposals, new_instances_list)
@@ -109,22 +109,30 @@ class WiFi_DensePose(nn.Module):
         loss_densepose = loss_v+loss_u
        
 
-        loss_transfer=0
-        for key in teacher_features.keys():      
-            teacher_output = teacher_features[key]
-            student_output = features[key]
-            layer_loss = F.mse_loss(student_output, teacher_output)
-            loss_transfer += layer_loss
+        loss_transfer=self.calculate_loss(teacher_features,features)
+        
 
-        losses = {'loss_densepose':loss_densepose*1000,
-                  'loss_cls':detector_losses['loss_cls']*100+proposal_losses['loss_rpn_cls']+proposal_losses['loss_rpn_loc'],
-                  'loss_box':detector_losses['loss_box_reg']*1000,
+        losses = {'loss_densepose':loss_densepose,
+                  'loss_cls':detector_losses['loss_cls']+proposal_losses['loss_rpn_cls']+proposal_losses['loss_rpn_loc'],
+                  'loss_box':detector_losses['loss_box_reg'],
                   'loss_transfer':loss_transfer
                   }
       
         return losses
 
-
+    def calculate_loss(self,teacher_outputs, student_outputs):
+        loss = 0
+        for key in teacher_outputs.keys():
+            teacher_normalized = self.normalize(teacher_outputs[key])
+            student_normalized = self.normalize(student_outputs[key])
+            current_loss = F.mse_loss(student_normalized, teacher_normalized)
+            loss += current_loss
+        return loss
+    
+    def normalize(self,tensor):
+        mean = tensor.mean(dim=[2, 3], keepdim=True)
+        std = tensor.std(dim=[2, 3], keepdim=True) + 1e-5
+        return (tensor - mean) / std
 
 
     @property
@@ -140,19 +148,7 @@ class WiFi_DensePose(nn.Module):
         )
         return images
     
-    def _calculate_transfer_learning_loss(self,teacher_features, student_features):
-        loss = 0.0
-        for key in ['p5','p4','p3', 'p2']:
-            teacher_feature = teacher_features[key]
-            
-            student_feature = student_features[key]
-            teacher_feature_downsampled = F.interpolate(teacher_feature, size=student_feature.shape[-2:], mode='nearest')
-            if torch.isnan(teacher_feature_downsampled).any() or torch.isnan(student_feature).any():
-                print("exist Nan")
-            loss += F.mse_loss(student_feature, teacher_feature_downsampled)
-
-        return loss
-
+ 
         
 
 

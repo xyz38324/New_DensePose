@@ -14,9 +14,14 @@ def add_custom_config(cfg: CN):
     _C.MODEL.Student=CN()
     _C.MODEL.Student.ROI_HEADS = "Student_ROIHead"
 
+  
+
     _C.MTN=CN()
     _C.MTN.NAME=""
 
+    _C.Student=CN()
+    _C.Student.Resume="./output"
+    _C.Student.save_interval=None
     _C.loss=CN()
     _C.loss.densepose=None
     _C.loss.cls = None
