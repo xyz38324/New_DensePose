@@ -16,7 +16,7 @@ class MyTrainer(DefaultTrainer):
         checkpointer = DetectionCheckpointer(teacher_model)
         checkpointer.load(cfg.MODEL.WEIGHTS)   
         
-        cfg = DefaultTrainer.auto_scale_workers(cfg, comm.get_world_size())
+        # cfg = DefaultTrainer.auto_scale_workers(cfg, comm.get_world_size())
         
         
         model = self.build_model(cfg)

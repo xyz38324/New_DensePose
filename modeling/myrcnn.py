@@ -5,9 +5,8 @@ from modeling.build_model import Teacher_Model_REGISTRY
 from detectron2.modeling.meta_arch import GeneralizedRCNN
 from densepose.modeling.roi_heads import DensePoseROIHeads
 from detectron2.modeling.roi_heads import ROI_HEADS_REGISTRY, StandardROIHeads
-from detectron2.structures import ImageList, Instances
 from detectron2.modeling.roi_heads import select_foreground_proposals
-from detectron2.structures import Boxes
+from .build_model import build_teacher_roihead
 from copy import deepcopy
 @Teacher_Model_REGISTRY.register()
 class MyGeneralizedRCNN(GeneralizedRCNN):
@@ -17,8 +16,11 @@ class MyGeneralizedRCNN(GeneralizedRCNN):
 
     @classmethod
     def from_config(cls, cfg):
-        
+     
         parent_params = super().from_config(cfg)
+        backbone = parent_params["backbone"]
+        roi_heads= build_teacher_roihead(cfg, backbone.output_shape())
+        parent_params["roi_heads"]=roi_heads
         return parent_params
     
     def forward(self, batched_inputs: List[Dict[str, torch.Tensor]]):

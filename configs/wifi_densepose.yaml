@@ -24,11 +24,11 @@ loss:
   densepose: 0.6
   cls: 1.2
   box: 1.0
-  transfer: 1
+  transfer: 0.001
 
 Student: 
   Resume: 'output/checkpoint_0000005.pth'
-  save_interval: 5
+  save_interval: 50
 INPUT:
   MIN_SIZE_TEST: 480
   MAX_SIZE_TEST: 640

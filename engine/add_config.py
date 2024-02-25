@@ -14,6 +14,8 @@ def add_custom_config(cfg: CN):
     _C.MODEL.Student=CN()
     _C.MODEL.Student.ROI_HEADS = "Student_ROIHead"
 
+    _C.MODEL.Teacher=CN()
+    _C.MODEL.Teacher.ROI_HEADS= "Teacher_ROIHead"
   
 
     _C.MTN=CN()
@@ -28,6 +30,8 @@ def add_custom_config(cfg: CN):
     _C.loss.box=None
     _C.loss.transfer=None
 
+    # _C.MODEL.ROI_DENSEPOSE_HEAD = CN()
+    # _C.MODEL.ROI_DENSEPOSE_HEAD.DECODER_ON = True
 
 
  

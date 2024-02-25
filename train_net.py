@@ -15,8 +15,9 @@ def setup(args):
     Create a configuration object from args here.
     """
     cfg = get_cfg()
-    add_densepose_config(cfg)
     add_custom_config(cfg)
+    add_densepose_config(cfg)
+    
     
     cfg.merge_from_file("configs/wifi_densepose.yaml")  
 

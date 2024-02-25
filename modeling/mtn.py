@@ -55,7 +55,7 @@ class ModalityTranslationNetwork(nn.Module):
             nn.BatchNorm2d(8),
             nn.ConvTranspose2d(8, 4, kernel_size=3, stride=2, padding=1, output_padding=1),
             nn.ReLU(),
-            nn.Upsample(size=(480, 640), mode='bilinear', align_corners=True),
+            nn.Upsample(size=(480,640), mode='bilinear', align_corners=True),
             nn.Conv2d(4, 3, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
         )

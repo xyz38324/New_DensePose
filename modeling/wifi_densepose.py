@@ -72,7 +72,7 @@ class WiFi_DensePose(nn.Module):
 
                 new_instances_list.append(new_instances)
 
-        del instances
+        # del instances
 
 
         csi_phase = [x["csi"]['phase'].to(self.device) for x in batched_inputs]
@@ -86,30 +86,31 @@ class WiFi_DensePose(nn.Module):
             output_list.append(current_tensor.squeeze(0))
 
         mtn_image = self.preprocess_mtn(output_list)
-        mtn_image.tensor = self.normalize(mtn_image.tensor)
+        # mtn_image.tensor = self.normalize(mtn_image.tensor)/1000
         features = self.backbone(mtn_image.tensor)
-        proposals, proposal_losses = self.proposal_generator(mtn_image, features, new_instances_list)
-        _, detector_losses = self.roi_heads(mtn_image, features, proposals, new_instances_list)
+        scaled_features = {k: v / 1000 for k, v in features.items()}
+        proposals, proposal_losses = self.proposal_generator(mtn_image, scaled_features, new_instances_list)
+        _, detector_losses = self.roi_heads(mtn_image, scaled_features, proposals, new_instances_list)
         
-        predicted_dp_u = detector_losses['dp_u']
+        predicted_dp_u = detector_losses['dp_u']/1000
         loss_u = 0.0
         for i, new_instance in enumerate(new_instances_list):
             
             true_u = new_instance.u  
             loss_u += F.mse_loss(predicted_dp_u[i], true_u.squeeze(0))
-        loss_u /= len(new_instances_list)
+        loss_u /= len(instances)
 
-        predicted_dp_v = detector_losses['dp_v']
+        predicted_dp_v = detector_losses['dp_v']/1000
         loss_v = 0.0
         for i, new_instance in enumerate(new_instances_list):
             
             true_v = new_instance.v 
             loss_v += F.mse_loss(predicted_dp_v[i], true_v.squeeze(0))
-        loss_v /= len(new_instances_list)
+        loss_v /= len(instances)
         loss_densepose = loss_v+loss_u
        
 
-        loss_transfer=self.calculate_loss(teacher_features,features)
+        loss_transfer=self.calculate_loss(teacher_features,scaled_features)
         
 
         losses = {'loss_densepose':loss_densepose,
@@ -117,22 +118,27 @@ class WiFi_DensePose(nn.Module):
                   'loss_box':detector_losses['loss_box_reg'],
                   'loss_transfer':loss_transfer
                   }
-      
+        print(f"densepose:{loss_densepose}\n cls:{detector_losses['loss_cls']+proposal_losses['loss_rpn_cls']+proposal_losses['loss_rpn_loc']}\n box:{detector_losses['loss_box_reg']}\n transfer:{loss_transfer}")
+
         return losses
 
-    def calculate_loss(self,teacher_outputs, student_outputs):
+    def calculate_loss(self, teacher_outputs, student_outputs):
         loss = 0
-        for key in teacher_outputs.keys():
-            teacher_normalized = self.normalize(teacher_outputs[key])
-            student_normalized = self.normalize(student_outputs[key])
-            current_loss = F.mse_loss(student_normalized, teacher_normalized)
-            loss += current_loss
+        keys_to_calculate = ['p2', 'p3', 'p4', 'p5']
+        for key in keys_to_calculate:
+
+            if key in teacher_outputs and key in student_outputs:
+                teacher_normalized = self.normalize(teacher_outputs[key])
+                student_normalized = self.normalize(student_outputs[key])/1000
+                current_loss = F.mse_loss(student_normalized, teacher_normalized)
+                loss += current_loss
         return loss
+
     
     def normalize(self,tensor):
         mean = tensor.mean(dim=[2, 3], keepdim=True)
         std = tensor.std(dim=[2, 3], keepdim=True) + 1e-5
-        return (tensor - mean) / std
+        return (tensor - mean) / std*100
 
 
     @property

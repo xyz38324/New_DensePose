@@ -6,6 +6,9 @@ from scipy.io import loadmat
 from detectron2.data.detection_utils import read_image
 import glob
 import detectron2.data.transforms as T
+from torchvision.transforms import functional as F
+from detectron2.data.transforms import ResizeShortestEdge, PadTransform
+
 class CustomMMFIDataset(Dataset):
     def __init__(self, cfg, transform=None):
         self.include_dirs = ['E01', 'E02', 'E03']
