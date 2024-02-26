@@ -20,15 +20,20 @@ SOLVER:
 
 MODEL:
   WEIGHTS: "https://dl.fbaipublicfiles.com/densepose/densepose_rcnn_R_101_FPN_s1x_legacy/164832182/model_final_10af0e.pkl" 
-loss:
-  densepose: 0.6
-  cls: 1.2
-  box: 1.0
-  transfer: 0.001
+
 
 Student: 
-  Resume: 'output/checkpoint_0000005.pth'
+  Resume: ''
   save_interval: 50
 INPUT:
   MIN_SIZE_TEST: 480
   MAX_SIZE_TEST: 640
+
+transfer:
+  only: True
+
+loss:
+  densepose: 0
+  cls: 0
+  box: 0
+  transfer: 0.1

@@ -81,6 +81,7 @@ class CustomTrainer(SimpleTrainer):
         self.teacher_model = teacher_model
         self.checkpointer = checkpointer
         self.save_interval = cfg.Student.save_interval
+        self.transfer_only =cfg.transfer.only
     def run_step(self):
         assert self.model.training, "[SimpleTrainer] model was changed to eval mode!"
         start = time.perf_counter()
@@ -92,7 +93,10 @@ class CustomTrainer(SimpleTrainer):
             results,features=self.teacher_model(data)
     
         loss_dict = self.model(data,results,features)
-        losses = self.loss_box * loss_dict['loss_box'] + self.loss_cls * loss_dict['loss_cls'] +self.loss_densepose * loss_dict['loss_densepose']+ self.loss_transfer * loss_dict['loss_transfer']
+        if self.transfer_only:
+            losses = self.loss_transfer * loss_dict['loss_transfer']
+        else:
+            losses = self.loss_box * loss_dict['loss_box'] + self.loss_cls * loss_dict['loss_cls'] +self.loss_densepose * loss_dict['loss_densepose']+ self.loss_transfer * loss_dict['loss_transfer']
 
 
         print(self.iter)
@@ -104,6 +108,9 @@ class CustomTrainer(SimpleTrainer):
         if not self.zero_grad_before_forward:
             self.optimizer.zero_grad()
         losses.backward()
+
+    
+        torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
 
         self.after_backward()
 

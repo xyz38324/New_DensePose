@@ -9,7 +9,7 @@ from detectron2.utils.logger import setup_logger
 
 from densepose import add_densepose_config
 from engine.add_config import add_custom_config
-from detectron2.checkpoint import DetectionCheckpointer
+
 def setup(args):
     """
     Create a configuration object from args here.

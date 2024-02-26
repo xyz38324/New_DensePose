@@ -29,12 +29,9 @@ def add_custom_config(cfg: CN):
     _C.loss.cls = None
     _C.loss.box=None
     _C.loss.transfer=None
-
-    # _C.MODEL.ROI_DENSEPOSE_HEAD = CN()
-    # _C.MODEL.ROI_DENSEPOSE_HEAD.DECODER_ON = True
-
-
- 
+   
+    _C.transfer=CN()
+    _C.transfer.only = True
   
 
 
